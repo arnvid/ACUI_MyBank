@@ -1,0 +1,9 @@
+<Bindings>
+  <!-- Toggle ModName On/Off -->
+  <Binding name="MYBANKICON" description="Toggle ACUI MyBank Icon Window" header="MYBANKHEADER">
+    ToggleACUI_MyBankFrame();
+  </Binding>
+  <Binding name="MYBANKCONFIG" description="Show ACUI MyBank Config Window" header="MYBANKCONFIGHEADER">
+	  ShowUIPanel(ACUI_MyBankConfigFrame);
+  </Binding>
+</Bindings>

@@ -4,6 +4,9 @@
 -- Purpose: Functions for ACUI_MyBank WoW Window.
 -- 
 -- ChangeLog:
+-- 3.1.0.0
+-- - Bumped toc and started testing
+-- 
 -- 3.0.2.3
 -- - Fixed OnLoad code which gave MoneyFrame.lua error.
 -- 
@@ -98,7 +101,7 @@
 -- Saved Configuration
 -----------------------
 ACUI_MyBankProfile = {}
-MYBANK_VERSION           =  "3.0.2.3";
+MYBANK_VERSION           =  "3.1.0.0";
 
 local PlayerName = nil; -- Logged in player name
 local bankPlayer     = nil; -- viewing player pointer

@@ -1,9 +1,9 @@
-## Interface: 30000
+## Interface: 30100
 ## Title: ACUI MyBank
-## Version: 3.0.2.3
+## Version: 3.1.0.0
 ## Author: ievil
 ## Notes: Standalone, configurable bank viewer.
-## X-Date: October 20, 2008
+## X-Date: April 16, 2009
 ## X-Email: arnvid@gmail.com
 ## X-Category: MYADDONS_CATEGORY_INVENTORY
 ## X-Help: ACUIMYBANK_HELP

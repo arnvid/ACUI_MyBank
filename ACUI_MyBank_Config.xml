@@ -1,0 +1,125 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
+	<Script file="ACUI_MyBank_Config.lua"/>
+	<Frame name="ACUI_MyBankConfigFrame" frameStrata="LOW" parent="UIParent" toplevel="false" movable="false" enableMouse="true" hidden="true">
+		<Size><AbsDimension x="250" y="380"/></Size>
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets><AbsInset left="5" right="5" top="5" bottom="5"/></BackgroundInsets>
+			<TileSize><AbsValue val="16"/></TileSize>
+			<EdgeSize><AbsValue val="16"/></EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT" text="ACUI MyBank Config">
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset><AbsDimension x="0" y="-10"/></Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="ACUI_MyBankConfigCloseButton" inherits="UIPanelButtonTemplate" text="CLOSE">
+				<Size>
+					<AbsDimension x="80" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOM" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="15"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						HideUIPanel(this:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+			<CheckButton name="ACUI_MyBankConfigReplaceCheck" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" RelativePoint="TOPLEFT">
+						<Offset><AbsDimension x="10" y="-45"/></Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="ACUI_MyBankConfigFreezeCheck" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" RelativePoint="BOTTOMLEFT" relativeTo="ACUI_MyBankConfigReplaceCheck">
+						<Offset><AbsDimension x="0" y="-10"/></Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<EditBox name="ACUI_MyBankConfigColumns" letters="2" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
+				<Size><AbsDimension x="35" y="25"/></Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="ACUI_MyBankConfigFreezeCheck" relativePoint="BOTTOMLEFT">
+						<Offset><AbsDimension x="10" y="-10"/></Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString inherits="GameFontNormalSmall" text="ACUI MyBank Columns">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT">
+									<Offset><AbsDimension x="-5" y="0"/></Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</EditBox>
+			<CheckButton name="ACUI_MyBankConfigHighlightItemsCheck" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" RelativePoint="BOTTOMLEFT" relativeTo="ACUI_MyBankConfigColumns">
+						<Offset><AbsDimension x="-10" y="-10"/></Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="ACUI_MyBankConfigHighlightBagsCheck" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" RelativePoint="BOTTOMLEFT" relativeTo="ACUI_MyBankConfigHighlightItemsCheck">
+						<Offset><AbsDimension x="0" y="-10"/></Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="ACUI_MyBankConfigGraphicsCheck" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" RelativePoint="BOTTOMLEFT" relativeTo="ACUI_MyBankConfigHighlightBagsCheck">
+						<Offset><AbsDimension x="0" y="-10"/></Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="ACUI_MyBankConfigBackgroundCheck" inherits="UICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" RelativePoint="BOTTOMLEFT" relativeTo="ACUI_MyBankConfigGraphicsCheck">
+						<Offset><AbsDimension x="0" y="-10"/></Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				UIPanelWindows["ACUI_MyBankConfigFrame"] = {area = "center", pushable = 0};
+				ACUI_MyBankConfigReplaceCheckText:SetText(MYBANK_CONFIG_REPLACE);
+				ACUI_MyBankConfigFreezeCheckText:SetText(MYBANK_CONFIG_FREEZE);
+				ACUI_MyBankConfigHighlightItemsCheckText:SetText(MYBANK_CONFIG_HIGHLIGHTITEMS);
+				ACUI_MyBankConfigHighlightBagsCheckText:SetText(MYBANK_CONFIG_HIGHLIGHTBAGS);
+				ACUI_MyBankConfigGraphicsCheckText:SetText("Use Bizzard Style Background");
+				ACUI_MyBankConfigBackgroundCheckText:SetText("Show Background in ACUI MyBank");
+			</OnLoad>
+			<OnShow>
+				ACUI_MyBankConfig_OnShow();
+			</OnShow>
+			<OnHide>
+				ACUI_MyBankConfig_OnHide();
+				if (MYADDONS_ACTIVE_OPTIONSFRAME == this) then
+					ShowUIPanel(myAddOnsFrame);
+				end
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

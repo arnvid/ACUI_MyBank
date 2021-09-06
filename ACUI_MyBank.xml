@@ -1,0 +1,703 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ C:\Projects\WoW\Bin\Interface\FrameXML\UI.xsd">
+	<Script file="ACUI_localization.lua"/> 
+	<Script file="ACUI_MyBank_Config.lua"/>
+	<Script file="ACUI_MyBank.lua"/> 
+	<Script file="ACUI_MyBank_TextFns.lua"/>
+	<!-- BEGIN TEMPLATES -->
+	<Button name="ACUI_MyBankButtonTemplate" inherits="ItemButtonTemplate" hidden="true" virtual="true">
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnEnter>
+				ACUI_MyBankFrame_Button_OnEnter();
+			</OnEnter>
+			<OnLeave>
+				ACUI_MyBankFrame_Button_OnLeave();
+			</OnLeave>
+		</Scripts>
+	</Button>
+	<Button name="ACUI_MyBankFrameItemButtonTemplate" inherits="ACUI_MyBankButtonTemplate" hidden="true" virtual="true">
+		<Frames>
+			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate"/>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				ACUI_MyBankFrameItemButton_OnLoad();
+			</OnLoad>
+			<OnHide>
+				if ( this.hasStackSplit and (this.hasStackSplit == 1) ) then
+					StackSplitFrame:Hide();
+				end
+			</OnHide>
+			<OnClick>
+				ACUI_MyBankFrameItemButton_OnClick(arg1);
+			</OnClick>
+			<OnDragStart>
+				ACUI_MyBankFrameItemButton_OnClick("LeftButton",1);
+			</OnDragStart>
+			<OnReceiveDrag>
+				ACUI_MyBankFrameItemButton_OnClick("LeftButton",1);
+			</OnReceiveDrag>
+		</Scripts>
+	</Button>
+	<Button name="ACUI_MyBankBagButtonTemplate" inherits="ACUI_MyBankButtonTemplate" hidden="false" virtual="true">
+		<Scripts>
+			<OnLoad>
+				this.isBag = 1;
+				ACUI_MyBankFrameItemButton_OnLoad();
+			</OnLoad>
+			<OnClick>
+				if ( IsShiftKeyDown() ) then
+					ACUI_MyBankFrameItemButtonBag_OnShiftClick();
+				else
+					ACUI_MyBankFrameItemButtonBag_OnClick(arg1);
+				end
+			</OnClick>
+			<OnDragStart>
+				ACUI_MyBankFrameItemButtonBag_OnShiftClick("LeftButton",1);
+			</OnDragStart>
+			<OnReceiveDrag>
+				ACUI_MyBankFrameItemButtonBag_OnClick("LeftButton", 1);
+			</OnReceiveDrag>
+		</Scripts>
+	</Button>
+	<!-- BEGIN REAL FRAMES -->
+	<Frame name="ACUI_MyBankFrame" frameStrata="LOW" parent="UIParent" toplevel="false" movable="true" enableMouse="true" hidden="true">
+		<Size><AbsDimension x="350" y="500"/></Size>
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" >
+				<Offset><AbsDimension x="-200" y="50"/></Offset>
+			</Anchor>
+		</Anchors>
+		<Backdrop name="ACUI_MyBankFrameBackdrop" bgFile="Interface\ACUI_MyBank\Skin\AllBlack" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets><AbsInset left="5" right="5" top="5" bottom="5"/></BackgroundInsets>
+			<TileSize><AbsValue val="16"/></TileSize>
+			<EdgeSize><AbsValue val="16"/></EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentPortrait" hidden="true" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankPortait" > <!--   -->
+					<Size><AbsDimension x="58" y="58"/></Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset><AbsDimension x="-7" y="2"/></Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+							
+				<Texture name="$parentTextureTopLeft" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankTopLeft" hidden="true">
+					<Size>
+						<AbsDimension x="128" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset><AbsDimension x="-67" y="60"/></Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTextureTopRight" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankTopRight" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT"> 
+							<Offset><AbsDimension x="36" y="60"/></Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTextureTopCenter" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankTopCenter" hidden="true">
+					<Size>
+						<AbsDimension x="128" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentTextureTopLeft" relativePoint="BOTTOMRIGHT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentTextureTopRight" relativePoint="BOTTOMLEFT"/>
+					</Anchors>
+				</Texture>
+
+				<Texture name="$parentTextureBottomLeft" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankBottomLeft" hidden="true">
+					<Size>
+						<AbsDimension x="128" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset><AbsDimension x="-67" y="-60"/></Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTextureBottomRight" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankBottomRight" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT"> 
+							<Offset><AbsDimension x="36" y="-60"/></Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTextureBottomCenter" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankBottomCenter" hidden="true">
+					<Size>
+						<AbsDimension x="128" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTextureBottomLeft" relativePoint="TOPRIGHT"/>
+						<Anchor point="TOPRIGHT" relativeTo="$parentTextureBottomRight" relativePoint="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+
+				<Texture name="$parentTextureLeft" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankLeft" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeTo="$parentTextureTopLeft" relativePoint="BOTTOMRIGHT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentTextureBottomLeft" relativePoint="TOPRIGHT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTextureRight" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankRight" hidden="true">
+					<Size>
+						<AbsDimension x="64" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTextureTopRight" relativePoint="BOTTOMLEFT"/>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentTextureBottomRight" relativePoint="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture name="$parentTextureCenter" file="Interface\AddOns\ACUI_MyBank\Skin\MyBankCenter" hidden="true">
+					<Size>
+						<AbsDimension x="128" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTextureTopCenter" relativePoint="BOTTOMLEFT"/>
+						<Anchor point="TOPRIGHT" relativeTo="$parentTextureTopCenter" relativePoint="BOTTOMRIGHT"/>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentTextureBottomCenter" relativePoint="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentTextureBottomCenter" relativePoint="TOPRIGHT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset><AbsDimension x="7" y="-6"/></Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="ACUI_MyBankFrameAtBankText" inherits="GameFontNormal" justifyH="LEFT" text="MYBANK_ATBANK" hidden="true">
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT">
+							<Offset><AbsDimension x="7" y="0"/></Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentSlots" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset><AbsDimension x="7" y="15"/></Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+		<Frame name="ACUI_MyBankFramePurchaseInfo" hidden="false">
+			<Size>
+				<AbsDimension x="200" y="23" />
+			</Size>
+			<Anchors>
+				<Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
+					<Offset>
+						<AbsDimension x="-15" y="10"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Frames>
+				<Button name="ACUI_MyBankFramePurchaseButton" inherits="UIPanelButtonTemplate" disabled="true" virtual="true" text="MYBANK_FRAME_BUY">
+					<Size>
+						<AbsDimension x="64" y="21"/>
+					</Size>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnClick>
+							PlaySound("igMainMenuOption");
+							PurchaseSlot();
+						</OnClick>
+					</Scripts>
+				</Button>
+				<Frame name="ACUI_MyBankFrameDetailMoneyFrame" inherits="SmallMoneyFrameTemplate" hidden="false">
+					<Anchors>
+						<Anchor point="RIGHT" relativeTo="ACUI_MyBankFramePurchaseButton" relativePoint="LEFT">
+							<Offset>
+								<AbsDimension x="-5" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Scripts>
+						<OnLoad>
+							SmallMoneyFrame_OnLoad();
+							MoneyFrame_SetType("STATIC");
+						</OnLoad>
+					</Scripts>
+				</Frame>
+			</Frames>
+		</Frame>	 
+	
+      <Button name="$parentItem1" inherits="ACUI_MyBankFrameItemButtonTemplate" id="1"/>
+      <Button name="$parentItem2" inherits="ACUI_MyBankFrameItemButtonTemplate" id="2"/>
+      <Button name="$parentItem3" inherits="ACUI_MyBankFrameItemButtonTemplate" id="3"/>
+      <Button name="$parentItem4" inherits="ACUI_MyBankFrameItemButtonTemplate" id="4"/>
+      <Button name="$parentItem5" inherits="ACUI_MyBankFrameItemButtonTemplate" id="5"/>
+      <Button name="$parentItem6" inherits="ACUI_MyBankFrameItemButtonTemplate" id="6"/>
+      <Button name="$parentItem7" inherits="ACUI_MyBankFrameItemButtonTemplate" id="7"/>
+      <Button name="$parentItem8" inherits="ACUI_MyBankFrameItemButtonTemplate" id="8"/>
+      <Button name="$parentItem9" inherits="ACUI_MyBankFrameItemButtonTemplate" id="9"/>
+      <Button name="$parentItem10" inherits="ACUI_MyBankFrameItemButtonTemplate" id="10"/>
+      <Button name="$parentItem11" inherits="ACUI_MyBankFrameItemButtonTemplate" id="11"/>
+      <Button name="$parentItem12" inherits="ACUI_MyBankFrameItemButtonTemplate" id="12"/>
+      <Button name="$parentItem13" inherits="ACUI_MyBankFrameItemButtonTemplate" id="13"/>
+      <Button name="$parentItem14" inherits="ACUI_MyBankFrameItemButtonTemplate" id="14"/>
+      <Button name="$parentItem15" inherits="ACUI_MyBankFrameItemButtonTemplate" id="15"/>
+      <Button name="$parentItem16" inherits="ACUI_MyBankFrameItemButtonTemplate" id="16"/>
+      <Button name="$parentItem17" inherits="ACUI_MyBankFrameItemButtonTemplate" id="17"/>
+      <Button name="$parentItem18" inherits="ACUI_MyBankFrameItemButtonTemplate" id="18"/>
+      <Button name="$parentItem19" inherits="ACUI_MyBankFrameItemButtonTemplate" id="19"/>
+      <Button name="$parentItem20" inherits="ACUI_MyBankFrameItemButtonTemplate" id="20"/>
+      <Button name="$parentItem21" inherits="ACUI_MyBankFrameItemButtonTemplate" id="21"/>
+      <Button name="$parentItem22" inherits="ACUI_MyBankFrameItemButtonTemplate" id="22"/>
+      <Button name="$parentItem23" inherits="ACUI_MyBankFrameItemButtonTemplate" id="23"/>
+      <Button name="$parentItem24" inherits="ACUI_MyBankFrameItemButtonTemplate" id="24"/>
+      <Button name="$parentItem25" inherits="ACUI_MyBankFrameItemButtonTemplate" id="25"/>
+      <Button name="$parentItem26" inherits="ACUI_MyBankFrameItemButtonTemplate" id="26"/>
+      <Button name="$parentItem27" inherits="ACUI_MyBankFrameItemButtonTemplate" id="27"/>
+      <Button name="$parentItem28" inherits="ACUI_MyBankFrameItemButtonTemplate" id="28"/>
+      <Button name="$parentItem29" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem30" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem31" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem32" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem33" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem34" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem35" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem36" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem37" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem38" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem39" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem40" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem41" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem42" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem43" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem44" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem45" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem46" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem47" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem48" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem49" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem50" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem51" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem52" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem53" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem54" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem55" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem56" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem57" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem58" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem59" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem60" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem61" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem62" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem63" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem64" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem65" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem66" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem67" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem68" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem69" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem70" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem71" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem72" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem73" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem74" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem75" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem76" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem77" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem78" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem79" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem80" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem81" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem82" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem83" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem84" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem85" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem86" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem87" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem88" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem89" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem90" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem91" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem92" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem93" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem94" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem95" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem96" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem97" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem98" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem99" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem100" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem101" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem102" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem103" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem104" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem105" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem106" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem107" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem108" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem109" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem110" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem111" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem112" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem113" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem114" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem115" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem116" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem117" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem118" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem119" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem120" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem121" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem122" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem123" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem124" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem125" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem126" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem127" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem128" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem129" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem130" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem131" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem132" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem133" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem134" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem135" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem136" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem137" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem138" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem139" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem140" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem141" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem142" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem143" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem144" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem145" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem146" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem147" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem148" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem149" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem150" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem151" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem152" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem153" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem154" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem155" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem156" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem157" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem158" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem159" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem160" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem161" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem162" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem163" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem164" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem165" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem166" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem167" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem168" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem169" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem170" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem171" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem172" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem173" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem174" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem175" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem176" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem177" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem178" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem179" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem180" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem181" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem182" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem183" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem184" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem185" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem186" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem187" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem188" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem189" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem190" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem191" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem192" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem193" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem194" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem195" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem196" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem197" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem198" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem199" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem200" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem201" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem202" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem203" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem204" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem205" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem206" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem207" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem208" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem209" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem210" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem211" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem212" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem213" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem214" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem215" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem216" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem217" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem218" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem219" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem220" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem221" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem222" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem223" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+      <Button name="$parentItem224" inherits="ACUI_MyBankFrameItemButtonTemplate"/>
+		<Frame name="ACUI_MyBankBagButtonsBar">
+			<Size><AbsDimension x="232" y="37"/></Size>
+			<Anchors><Anchor point="TOP" relativePoint="TOP" relativeto="ACUI_MyBankFrame"><Offset><AbsDimension x="0" y="-67" /></Offset></Anchor></Anchors>
+			<Frames>
+				<Button name="ACUI_MyBankFrameBag5" inherits="ACUI_MyBankBagButtonTemplate" id="5"/>
+				<Button name="ACUI_MyBankFrameBag6" inherits="ACUI_MyBankBagButtonTemplate" id="6"/>
+				<Button name="ACUI_MyBankFrameBag7" inherits="ACUI_MyBankBagButtonTemplate" id="7"/>
+				<Button name="ACUI_MyBankFrameBag8" inherits="ACUI_MyBankBagButtonTemplate" id="8"/>
+				<Button name="ACUI_MyBankFrameBag9" inherits="ACUI_MyBankBagButtonTemplate" id="9"/>
+				<Button name="ACUI_MyBankFrameBag10" inherits="ACUI_MyBankBagButtonTemplate" id="10"/>
+				<Button name="ACUI_MyBankFrameBag11" inherits="ACUI_MyBankBagButtonTemplate" id="11"/>
+			</Frames>
+		</Frame>
+		<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+			<Anchors>
+				<Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+					<Offset>
+						<AbsDimension x="2" y="2"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnClick>
+					CloseACUI_MyBankFrame();
+				</OnClick>
+			</Scripts>
+		</Button>
+		<Button name="$parentFreezeButton" inherits="UIPanelCloseButton">
+			<NormalTexture name="MBFreezeNormalTexture" file="Interface\AddOns\ACUI_MyBank\Skin\LockButton-Unlocked-Up"/>
+			<PushedTexture name="MBFreezePushedTexture" file="Interface\AddOns\ACUI_MyBank\Skin\LockButton-Locked-Down"/>
+			<Anchors>
+				<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT">
+					<Offset><Absdimension x="10" y="0"/></Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnClick>
+					ACUI_MyBank_Toggle_Option("Freeze");
+				</OnClick>
+			</Scripts>
+		</Button>
+		<Button name="$parentHideBagsButton" inherits="UIPanelCloseButton">
+			<NormalTexture name="MBHideBagsNormalTexture" file="Interface\AddOns\ACUI_MyBank\Skin\MinimizeButton-Up"/>
+			<PushedTexture name="MBHideBagsPushedTexture" file="Interface\AddOns\ACUI_MyBank\Skin\MinimizeButton-Down"/>
+			<Anchors>
+				<Anchor point="RIGHT" relativeTo="$parentFreezeButton" relativePoint="LEFT">
+					<Offset><Absdimension x="15" y="0"/></Offset>
+				</Anchor>
+			</Anchors>
+			<Scripts>
+				<OnClick>
+					ACUI_MyBank_Toggle_Option("BagView");
+				</OnClick>
+			</Scripts>
+		</Button>
+		<Frame name="ACUI_MyBankDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+			<Anchors>
+				<Anchor point="TOP" relativeTo="ACUI_MyBankFrame" relativePoint="TOP">
+					<Offset>
+						<AbsDimension x="30" y="-38"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="MYBANK_FRAME_SELECTPLAYER">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="21" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			<Scripts>
+				<OnShow>
+					ACUI_MyBank_UserDropDown_OnLoad();
+				</OnShow>
+				<OnEnter>
+					GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT");
+					GameTooltip:SetText(this.tooltip, nil, nil, nil, nil, 1);
+				</OnEnter>
+				<OnLeave>
+					GameTooltip:Hide();
+				</OnLeave>
+			</Scripts>
+		</Frame>
+		<CheckButton name="ACUI_MyBank_AllRealms_Check" inherits="OptionsBaseCheckButtonTemplate">
+			<Anchors>
+				<Anchor point="TOPRIGHT" RelativeTo="ACUI_MyBankDropDown" RelativePoint="TOPLEFT">
+					<Offset>
+						<AbsDimension x="15" y="0"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+			<HitRectInsets>
+				<AbsInset left="0" right="0" top="0" bottom="0"/>
+			</HitRectInsets>
+			<Scripts>
+				<OnShow>
+					ACUI_MyBank_ShowAllRealms_Check_OnShow();
+				</OnShow>
+				<OnClick>
+					if ( this:GetChecked() ) then
+						PlaySound("igMainMenuOptionCheckBoxOff");
+					else
+						PlaySound("igMainMenuOptionCheckBoxOn");
+					end
+					ACUI_MyBank_ShowAllRealms_Check_OnClick();
+				</OnClick>
+				<OnEnter>
+					if ( this.tooltipText ) then
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(this.tooltipText, nil, nil, nil, nil, 1);
+					end
+				</OnEnter>
+				<OnLeave>
+					GameTooltip:Hide();
+				</OnLeave>
+			</Scripts>
+		</CheckButton>
+			<Frame name="ACUI_MyBank_MoneyFrame" inherits="SmallMoneyFrameTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-5" y="33"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+							SmallMoneyFrame_OnLoad();
+							MoneyFrame_SetType("STATIC");						
+					--	this.small = 1;
+					--	this.moneyType = "PLAYER";
+					--	this.info = {
+					--		collapse = 1,
+					--		showSmallerCoins = "Backpack"};
+					</OnLoad>
+					<OnShow>
+						-- Do nothing override
+					</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="ACUI_MyBank_MoneyFrameTotal" inherits="SmallMoneyFrameTemplate" hidden="false">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="ACUI_MyBankFrame" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="20" y="33"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="ACUI_MyBank_TotalMoneyText" inherits="GameFontHighlightSmall" text="MYBANK_FRAME_TOTAL" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent" relativePoint="RIGHT">
+									<Offset>
+										<AbsDimension x="1" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>	
+						SmallMoneyFrame_OnLoad();
+						MoneyFrame_SetType("STATIC");
+						--this.small = 1;
+						--this.moneyType = "PLAYER";
+						--this.info = {
+						--	collapse = 1,
+						--	showSmallerCoins = "Backpack"};
+					</OnLoad>
+					<OnShow>
+						--do nothing
+					</OnShow>
+				</Scripts>
+			</Frame>
+	</Frames>
+	<Scripts>
+      <OnEvent>
+        ACUI_MyBankFrame_OnEvent(event);
+        ACUI_MyBankTitle_Update();
+      </OnEvent>
+      <OnLoad>
+        ACUI_MyBankFrame_OnLoad();
+        --this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+        ACUI_MyBankTitle_Update();
+      </OnLoad>
+      <OnHide>
+        ACUI_MyBankFrame_OnHide();
+      </OnHide>
+      <OnShow>
+        ACUI_MyBankFrame_OnShow();
+      </OnShow>
+      <OnMouseDown>
+        if ( arg1 == "LeftButton" ) then
+          if ( ACUI_MyBankFreeze == 0 ) then
+            this:StartMoving();
+          else
+            ACUI_MyBank_Print(MYBANK_FROZEN_ERROR);
+          end
+        end
+      </OnMouseDown>
+      <OnMouseUp>
+        if ( arg1 == "LeftButton" ) then
+          this:StopMovingOrSizing();
+        end
+      </OnMouseUp>
+  </Scripts>
+  </Frame>
+
+	<GameTooltip name="ACUI_MyBankHiddenTooltip" inherits="GameTooltipTemplate" parent="UIParent" hidden="true">
+	  <Scripts>
+      <Onload>
+      	this:SetOwner(UIParent,"ANCHOR_NONE"); 
+      </Onload>
+    </Scripts>
+  </GameTooltip>
+</Ui>

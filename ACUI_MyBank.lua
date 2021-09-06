@@ -4,6 +4,11 @@
 -- Purpose: Functions for ACUI_MyBank WoW Window.
 -- 
 -- ChangeLog:
+-- 3.0.2.3
+-- - Fixed OnLoad code which gave MoneyFrame.lua error.
+-- 
+-- 3.0.2.2
+-- - Bumped version for release on Curse
 --
 -- 3.0.2.1
 -- - Upgraded code to load, and be 3.0 compatible
@@ -93,7 +98,7 @@
 -- Saved Configuration
 -----------------------
 ACUI_MyBankProfile = {}
-MYBANK_VERSION           =  "3.0.2.1";
+MYBANK_VERSION           =  "3.0.2.3";
 
 local PlayerName = nil; -- Logged in player name
 local bankPlayer     = nil; -- viewing player pointer
@@ -722,7 +727,6 @@ function ACUI_MyBank_UpdateBagCost(bags)
 		bags=0;
 	end
 	if bags < 7 then
-		ACUI_MyBankFramePurchaseInfo:Show();
 		local cost = ACUI_MyBank_GetBankSlotCost(bags);
 		MoneyFrame_SetType(ACUI_MyBankFrameDetailMoneyFrame,"STATIC");
 		MoneyFrame_Update("ACUI_MyBankFrameDetailMoneyFrame", cost);
@@ -731,8 +735,8 @@ function ACUI_MyBank_UpdateBagCost(bags)
 		else
 			SetMoneyFrameColor("ACUI_MyBankFrameDetailMoneyFrame", 1.0, 0.1, 0.1)
 		end
+		ACUI_MyBankFramePurchaseInfo:Show();
 	else
-		-- Hide frame
 		ACUI_MyBankFramePurchaseInfo:Hide();
 	end
 end

@@ -245,8 +245,8 @@
 					</Anchors>
 					<Scripts>
 						<OnLoad>
-							SmallMoneyFrame_OnLoad();
-							MoneyFrame_SetType("STATIC");
+							SmallMoneyFrame_OnLoad(self, "STATIC");
+							-- MoneyFrame_SetType("STATIC");
 						</OnLoad>
 					</Scripts>
 				</Frame>
@@ -610,13 +610,8 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-							SmallMoneyFrame_OnLoad();
-							MoneyFrame_SetType("STATIC");						
-					--	this.small = 1;
-					--	this.moneyType = "PLAYER";
-					--	this.info = {
-					--		collapse = 1,
-					--		showSmallerCoins = "Backpack"};
+							SmallMoneyFrame_OnLoad(self, "STATIC");
+					--  MoneyFrame_SetType("STATIC");						
 					</OnLoad>
 					<OnShow>
 						-- Do nothing override
@@ -646,13 +641,8 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>	
-						SmallMoneyFrame_OnLoad();
-						MoneyFrame_SetType("STATIC");
-						--this.small = 1;
-						--this.moneyType = "PLAYER";
-						--this.info = {
-						--	collapse = 1,
-						--	showSmallerCoins = "Backpack"};
+						SmallMoneyFrame_OnLoad(self, "STATIC");
+						-- MoneyFrame_SetType("STATIC");
 					</OnLoad>
 					<OnShow>
 						--do nothing
@@ -667,7 +657,6 @@
       </OnEvent>
       <OnLoad>
         ACUI_MyBankFrame_OnLoad();
-        --this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
         ACUI_MyBankTitle_Update();
       </OnLoad>
       <OnHide>

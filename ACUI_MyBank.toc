@@ -1,11 +1,10 @@
 ## Interface: 30000
 ## Title: ACUI MyBank
-## Version: 3.0.2.1
+## Version: 3.0.2.3
 ## Author: ievil
 ## Notes: Standalone, configurable bank viewer.
-## X-Date: October 19, 2008
-## X-Email: acuiwow@gmail.com
-## X-Website: http://www.leftoverexiles.com/forum/viewforum.php?f=46
+## X-Date: October 20, 2008
+## X-Email: arnvid@gmail.com
 ## X-Category: MYADDONS_CATEGORY_INVENTORY
 ## X-Help: ACUIMYBANK_HELP
 ## X-OptionsFrame: 
